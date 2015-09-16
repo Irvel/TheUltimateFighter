@@ -1,0 +1,228 @@
+//////////////////////////////////////////////////////////////////////////////
+//                                                                          //
+//                        The Ultimate Fight Game                           //
+//                                                                          //
+//                              Created By:                                 //
+//       Diego Garza Rodriguez              A00817231            ISD        //
+//       Carlos Javier Sanchez Lopez        A01139506            ITC        //
+//       Irvel Nduva Matias Vega            A01196346            ITC        //
+//       Emilio Lopez Sanchez               A01281082            ISD        //
+//                                                                          //
+//                      Programming Fundamentals                            //
+//                           Final Project                                  //
+//                         November 21, 2014                                //
+//////////////////////////////////////////////////////////////////////////////
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+//                              Libraries                                   //
+//////////////////////////////////////////////////////////////////////////////
+
+#include "TUF_GAME/Lib/TUF.h"
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+//                              Functions                                   //
+//////////////////////////////////////////////////////////////////////////////
+
+void paintBackground()
+{
+	unsigned short int iBitmap[10][16] = {
+		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+		{1,1,1,1,1,1,1,8,9,10,1,1,1,2,1,1},
+		{1,1,1,1,1,1,11,12,13,14,1,1,5,6,7,1},
+		{1,1,3,4,1,1,15,16,17,18,1,1,1,1,1,1},
+		{1,19,20,1,1,21,22,23,24,25,26,27,28,29,1,1},
+		{30,31,32,33,34,35,36,36,36,36,36,36,37,38,39,40},
+		{41,41,41,42,43,41,41,41,41,41,41,41,42,43,41,41},
+		{44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44},
+		{44,44,44,44,44,44,44,44,44,44,44,44,44,44,44,44}};
+	paintScreen(iBitmap,"BKG");
+}
+
+void fight (char cSprite1[10], int iStatus1, int iTransparentColor1, char cSprite2[10], int iStatus2, int iTransparentColor2)
+{
+//initialization of the sprites and variables
+int iUserInput=0, iWidth1=0, iHeight1=0, iWidth2=0, iHeight2=0, iRow1=100, iColumn1=100, iRow2=100, iColumn2=300;
+char cConcatenate1[45];
+	for(int iInitCounter=0; iInitCounter<45; iInitCounter++)
+				cConcatenate1[iInitCounter] = 0;
+char cStatus1[1] = {0};
+itoa(iStatus1,cStatus1,10);
+strcat(cConcatenate1,"TUF_GAME/Content/Sprites/");
+strcat(cConcatenate1,cSprite1);
+strcat(cConcatenate1,"/");
+strcat(cConcatenate1,cSprite1);
+strcat(cConcatenate1,cStatus1);
+strcat(cConcatenate1,".DEF");
+char cConcatenate2[45];
+	for(iInitCounter=0; iInitCounter<45; iInitCounter++)
+				cConcatenate2[iInitCounter] = 0;
+char cStatus2[1] = {0};
+itoa(iStatus2,cStatus2,10);
+strcat(cConcatenate2,"TUF_GAME/Content/Sprites/");
+strcat(cConcatenate2,cSprite2);
+strcat(cConcatenate2,"/");
+strcat(cConcatenate2,cSprite2);
+strcat(cConcatenate2,cStatus2);
+strcat(cConcatenate2,".DEF");
+fstream sprite1;
+	sprite1.open(cConcatenate1, ios::in);
+		sprite1 >> iWidth1;
+		sprite1 >> iHeight1;
+	sprite1.close();
+fstream sprite2;
+	sprite2.open(cConcatenate2, ios::in);
+		sprite2 >> iWidth2;
+		sprite2 >> iHeight2;
+	sprite2.close();
+
+//Retrieving first place pixel information
+sprite1.open("TUF_GAME/Content/Sprites/FIGHTER/FIGHTER0.DEF", ios::out);
+for (int iRowCounter=0; iRowCounter<=iHeight1; iRowCounter++)
+	for (int iColumnCounter=0; iColumnCounter<=iWidth1; iColumnCounter++)
+		sprite1 << retrievePixel(iRow1+iRowCounter, iColumn1+iColumnCounter) << endl;
+sprite1.close();
+sprite2.open("TUF_GAME/Content/Sprites/KNIGHT/KNIGHT0.DEF", ios::out);
+for (iRowCounter=0; iRowCounter<=iHeight2; iRowCounter++)
+	for (iColumnCounter=0; iColumnCounter<=iWidth2; iColumnCounter++)
+		sprite2 << retrievePixel(iRow2+iRowCounter, iColumn2+iColumnCounter) << endl;
+sprite2.close();
+
+//Placing for the first time the sprites
+printSprite(cSprite1,1,iTransparentColor1,iRow1,iColumn1);
+printSprite(cSprite2,1,iTransparentColor2,iRow2,iColumn2);
+
+//Start of the loop, when yo press 'f', 'F' or ESC it ends.
+  while(iUserInput != 102 && iUserInput != 70 && iUserInput != keyEsc)
+  {
+//Here is where you code the things that change with keyboard interaction
+     if(kbhit())
+     {
+	iUserInput = getInput();
+	     switch(iUserInput)
+	     {
+		case 119:
+		case 87:
+		case 115:
+		case 83:
+		case 97:
+		case 65:
+		case 100:
+		case 68:
+			printSprite(cSprite1,0,500,iRow1,iColumn1);
+			switch(iUserInput)
+		     {
+			case 119:
+			case 87:
+			if(iRow1>0)
+			   iRow1--;
+			   break;
+			case 115:
+			case 83:
+			if(iRow1<107)
+			   iRow1++;
+			   break;
+			case 97:
+			case 65:
+			if(iColumn1>0)
+			   iColumn1--;
+			   break;
+			case 100:
+			case 68:
+			if(iColumn1<289)
+			   iColumn1++;
+			}
+			sprite1.open("TUF_GAME/Content/Sprites/FIGHTER/FIGHTER0.DEF", ios::out);
+			for (int iRowCounter=0; iRowCounter<=iHeight1; iRowCounter++)
+				for (int iColumnCounter=0; iColumnCounter<=iWidth1; iColumnCounter++)
+					sprite1 << retrievePixel(iRow1+iRowCounter, iColumn1+iColumnCounter) << endl;
+			sprite1.close();
+			printSprite(cSprite1,1,iTransparentColor1,iRow1,iColumn1);
+			break;
+			case arrowUp:
+			case arrowDown:
+			case arrowLeft:
+			case arrowRight:
+			printSprite(cSprite2,0,500,iRow2,iColumn2);
+			switch(iUserInput)
+		     {
+			case arrowUp:
+			if(iRow2>0)
+			   iRow2--;
+			   break;
+			case arrowDown:
+			if(iRow2<150)
+			   iRow2++;
+			   break;
+			case arrowLeft:
+			if(iColumn2>0)
+			   iColumn2--;
+			   break;
+			case arrowRight:
+			if(iColumn2<310)
+			   iColumn2++;
+			}
+			sprite2.open("TUF_GAME/Content/Sprites/KNIGHT/KNIGHT0.DEF", ios::out);
+			for (iRowCounter=0; iRowCounter<=iHeight2; iRowCounter++)
+				for (iColumnCounter=0; iColumnCounter<=iWidth2; iColumnCounter++)
+					sprite2 << retrievePixel(iRow2+iRowCounter, iColumn2+iColumnCounter) << endl;
+			sprite2.close();
+			printSprite(cSprite2,1,iTransparentColor2,iRow2,iColumn2);
+		}
+     }
+//Here you code everything that you want to continue changing regardless the user interaction
+
+  }
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+//                            Main Program                                  //
+//////////////////////////////////////////////////////////////////////////////
+
+int main()
+{
+  mcga();
+  paintBackground();
+  printSprite("KNIGHT",1,0,85,150);
+  unsigned short int iLastPixels[25][25];
+  for(int iJump=0, iRow=108, iColumn=80; iJump < 35; iJump++)
+  {
+  		for (int iRowCounter=0; iRowCounter<25; iRowCounter++)
+			for (int iColumnCounter=0; iColumnCounter<25; iColumnCounter++)
+				iLastPixels[iRowCounter][iColumnCounter] = retrievePixel(iRow+iRowCounter, iColumn+iColumnCounter);
+  		printSpriteHorizontalFlip("FIGHTER",1,176,iRow,iColumn);
+  		delay(iJump*2);
+  		for (iRowCounter=0; iRowCounter<25; iRowCounter++)
+			for (iColumnCounter=0; iColumnCounter<25; iColumnCounter++)
+				paintPixel(iRow+iRowCounter, iColumn+iColumnCounter, iLastPixels[iRowCounter][iColumnCounter]);
+		iRow--;
+		iColumn++;
+  }
+   for(iJump=0; iJump < 13; iJump++)
+  {
+  		for (iRowCounter=0; iRowCounter<25; iRowCounter++)
+			for (iColumnCounter=0; iColumnCounter<25; iColumnCounter++)
+				iLastPixels[iRowCounter][iColumnCounter] = retrievePixel(iRow+iRowCounter, iColumn+iColumnCounter);
+  		printSpriteHorizontalFlip("FIGHTER",1,176,iRow,iColumn);
+  		delay(70-iJump*2);
+  		for (iRowCounter=0; iRowCounter<25; iRowCounter++)
+			for (iColumnCounter=0; iColumnCounter<25; iColumnCounter++)
+				paintPixel(iRow+iRowCounter, iColumn+iColumnCounter, iLastPixels[iRowCounter][iColumnCounter]);
+		iRow++;
+		iColumn++;
+  }
+  printSpriteHorizontalFlip("FIGHTER",1,176,iRow,iColumn);
+  //printSpriteVerticalFlip("WALLY",1,5,100,100);
+  //printSpriteHorizontalFlip("WALLY",1,5,100,150);
+  //printSprite90ClockwiseRotate("WALLY",1,5,100,200);
+  //printSprite90CounterClockwiseRotate("WALLY",1,5,100,250);
+  //fight("FIGHTER",1,176,"KNIGHT",1,0);
+  getch();
+  return 0;
+}
